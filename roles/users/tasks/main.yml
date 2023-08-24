@@ -1,0 +1,17 @@
+---
+- name: Ensure developer group exists
+  group:
+    name: developer
+    state: present
+- name: Add Users
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    groups: "{{ item.groups }}"
+    append: "{{ item.append }}"
+  loop: "{{ users }}"
+- name: Copy ssh keys
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.auth_key }}"
+  loop: "{{ users }}"

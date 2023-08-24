@@ -1,0 +1,5 @@
+---
+- name: Apply security updates
+  yum:
+    security: true
+    state: latest

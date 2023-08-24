@@ -1,0 +1,7 @@
+---
+users:
+  - name: shardy
+    password: $6$c.x4zGp8zcNAoR3e$kp.pcA1nwq9nI1/myd/G5aGp.gwjwwj95uNiXoKp07tfXar7zYCkHyAuUbTWEFkvCAvi4F9300aRfP/mzgO4L1
+    auth_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCsovnk+iZtPykEKNNHuSdpxIwnLk+6PYGwoH5Avjhh3DcsKSw8G6SVnsPjojHlkc3uI3Slrn3TXkhS2iXp2c2h5ZaDejabAgGdU321XSX3kvyWOpW2m3C82gv/+PoYZB/91KpQfC4vgG/SoSiap8lT4+9zJMLo/HN3OVQqkLaWltePw+kZrN0NnFwGYO9ZFag28JMp84AJJ1SDoRVzGeDr3xrUclILyr5sRSf1bT3Dx84+qiFG00s5S+e13UBn8FXMIwClJnk0rRWmgJKTGPA7OadD5+t/4TNmARLeXgJ+phEBAp2DgQBahqxTlE0NtnRvADztN/wY+lA8624eAFXyZ5K3fJ3u5OarFnz6R3rPh1uGnPllPK5cYMMcTp2YYjkKf4Dz2Ba1DFP2cxOb34FRdW3ex27Odeqx8nH7CqUz9FZtuHtXTG4K0PwuHcwvEY068XHhUBniI9FpGgYLZ5BIfdbH7lBaHkCd0gSmOJYJXYxLTJkaPi4ts3rr+2sp5s8=
+    groups: wheel
+    append: yes

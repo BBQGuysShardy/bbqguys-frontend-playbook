@@ -1,0 +1,17 @@
+---
+- name: Base playbook
+  hosts: all
+  tasks:
+  - name: Set hostname
+    hostname:
+      name: "{{ hostname }}"
+      use: "systemd"
+    when: hostname is defined
+  # Add groups task definition
+  - name: Run user role
+    import_role:
+      name: users
+  - name: Run security-updates role
+    import_role:
+      name: security-updates
+  become: true
