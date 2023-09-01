@@ -8,7 +8,6 @@
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     groups: "{{ item.groups }}"
-    append: "{{ item.append }}"
   loop: "{{ users }}"
 - name: Copy ssh keys
   authorized_key:
