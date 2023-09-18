@@ -1,7 +1,11 @@
 ---
-- name: Ensure developer group exists
+- name: Create developer group
   group:
     name: developer
+    state: present
+- name: Create jenkins group
+  group:
+    name: jenkins
     state: present
 - name: Add Users
   user:
@@ -14,3 +18,8 @@
     user: "{{ item.name }}"
     key: "{{ item.auth_key }}"
   loop: "{{ users }}"
+- name: Create Jenkins system user
+  user:
+    name: jenkins
+    password: $6$9JCOT4yGfyY8EZzI$TjM6ibTPf9TgDsQkJeuFo1kbJ2hpjjJQ/sy4ekj7L56EZc/QIt9X8gHCf4jCNChckg5DCIxrtEtxOT6DHgyTe.
+    groups: jenkins, wheel
