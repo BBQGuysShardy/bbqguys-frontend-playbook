@@ -23,3 +23,7 @@
     name: jenkins
     password: $6$lfcqgjahtNdVSlw7$e8zG7gB.UXYbt5jTuwe4h7lxm4FPoOMTWCiOKOgiaMbrSx/laY22Stz.dm9/Fu5Yy/6fqS2hZpeydxZhuPM8K0
     groups: jenkins, wheel
+- name: Add jenkins authorized key
+  authorized_key:
+    user: jenkins
+    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCZDZOO8KmupYgJWGPwfnGxCCBvuc761tAIXE/IkX5ZxsB8WqWZR9p8LmkLJCWw9xtee0uSHqR81X/RtCQMLB28GT9JdrG6fwAMjwHBbOoJR9CxWRWgbFcryvlGqshwqZrQ+4WSUh9DL7PDVLJmnvdv/A/obzT5fIe0AQNa6QGHgWd1Z6f7v4reM+dWp04nbxePsv6k7RvlMFv+/wSmQe1hpGTccAO+R74DxC1XFP6fQ2nBzTQ09fRagJvKNLJhO9hKvA/QYyRuqaSWGMyoJ5yYh7ZoCBUz8Lgna0W2T7mz41VmdFglgUYdLDjWepNfyY8aSSAPT6SPzJAKY2hl1J67
