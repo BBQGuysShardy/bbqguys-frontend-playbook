@@ -21,5 +21,5 @@
 - name: Create Jenkins system user
   user:
     name: jenkins
-    password: $6$9JCOT4yGfyY8EZzI$TjM6ibTPf9TgDsQkJeuFo1kbJ2hpjjJQ/sy4ekj7L56EZc/QIt9X8gHCf4jCNChckg5DCIxrtEtxOT6DHgyTe.
+    password: $6$lfcqgjahtNdVSlw7$e8zG7gB.UXYbt5jTuwe4h7lxm4FPoOMTWCiOKOgiaMbrSx/laY22Stz.dm9/Fu5Yy/6fqS2hZpeydxZhuPM8K0
     groups: jenkins, wheel
