@@ -1,17 +1,14 @@
 ---
 - name: Base playbook
+  become: true
+  gather_facts: yes
   hosts: all
   tasks:
-  - name: Set hostname
-    hostname:
-      name: "{{ hostname }}"
-      use: "systemd"
-    when: hostname is defined
-  # Add groups task definition
-  - name: Run user role
+  - name: Running react role
     import_role:
-      name: users
-  - name: Run security-updates role
+      name: react
+    when: "ansible_default_ipv4.address == '10.0.0.2'"
+  - name: Running graphql role
     import_role:
-      name: security-updates
-  become: true
+      name: graphql
+    when: "ansible_default_ipv4.address == '10.0.0.5'"

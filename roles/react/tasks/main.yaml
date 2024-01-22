@@ -1,0 +1,129 @@
+---
+- name: Installing Yum Packages
+  yum:
+    name: "{{ yum_packages }}"
+    state: present
+- name: Installing Global Node Packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+  loop: "{{ npm_packages }}"
+- name: Ensuring /var/www Exists
+  file:
+    path: /var/www
+    state: directory
+    mode: '0775'
+    owner: nginx
+    group: wheel
+- name: Setting Safe Directories in Git Config
+  community.general.git_config:
+    name: safe.directory
+    scope: global
+    value: /var/www/bbqguys-frontend
+- name: Cloning bbqguys-frontend React Repository
+  git:
+    repo: git@github.com:BBQGuys-QA/bbqguys-frontend.git
+    dest: /var/www/bbqguys-frontend
+    accept_hostkey: true
+    single_branch: true
+    depth: 1
+    force: true
+    version: testing
+    key_file: /home/shardy/.ssh/id_rsa # This should be changed to a generic system user later.
+- name: Setting memoryLimit to 1024
+  lineinfile:
+    dest: /var/www/bbqguys-frontend/package.json
+    regexp: '(.*"memoryLimit":).*$'
+    line: '\1 4096'
+    backrefs: true
+    state: present 
+- name: Placing .env (temporary)
+  copy:
+    src: var/www/bbqguys-frontend/.env
+    dest: /var/www/bbqguys-frontend/.env
+    owner: nginx
+    group: wheel
+    mode: '0644'
+- name: Updating GraphQL Client Endpoint (temporary)
+  lineinfile:
+    dest: /var/www/bbqguys-frontend/src/Graphql/ApolloGraphQL.tsx
+    regexp: '(.*GRAPHQL_ENDPOINT_CLIENT =)'
+    line: '\1 "http://10.0.0.5:4000/";'
+    backrefs: true
+    state: present
+- name: Updating GraphQL Server Endpoint (temporary)
+  lineinfile:
+    dest: /var/www/bbqguys-frontend/src/Graphql/ApolloGraphQL.tsx
+    regexp: '(.*GRAPHQL_ENDPOINT_SERVER =)'
+    line: '\1 "http://10.0.0.5:4000/";'
+    backrefs: true
+    state: present
+- name: Placing pm2.config.js
+  copy:
+    src: var/www/bbqguys-frontend/pm2.config.js
+    dest: /var/www/bbqguys-frontend/pm2.config.js
+    owner: nginx
+    group: wheel
+    mode: '0644'
+- name: Installing Yarn Packages
+  command:
+    chdir: /var/www/bbqguys-frontend
+    cmd: /usr/local/bin/yarn install --ignore-engines
+- name: Building bundle
+  command:
+    chdir: /var/www/bbqguys-frontend
+    cmd: /usr/local/bin/yarn testing:build-bundle
+- name: Building server
+  command:
+    chdir: /var/www/bbqguys-frontend
+    cmd: /usr/local/bin/yarn testing:build-server
+- name: Updating owner and group of /var/www/bbqguys-frontend
+  file:
+    path: /var/www/bbqguys-frontend
+    owner: nginx
+    group: wheel
+    recurse: true
+- name: Ensuring /etc/nginx/ssl exists
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: '0644'
+    owner: root
+    group: root
+- name: Installing TLS cert
+  copy:
+    src: etc/nginx/ssl/2023.pem
+    dest: /etc/nginx/ssl/2023.pem
+    owner: root
+    group: root
+    mode: '0644'
+- name: Installing TLS key
+  copy:
+    src: etc/nginx/ssl/2023.key
+    dest: /etc/nginx/ssl/2023.key
+    owner: root
+    group: root
+    mode: '0644'
+- name: Updating nginx configuration
+  copy:
+    src: etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+- name: Starting nginx
+  service:
+    name: nginx
+    enabled: true
+    state: restarted
+- name: Stopping existing PM2
+  become: yes
+  become_user: nginx
+  command:
+    cmd: /usr/local/bin/pm2 kill
+- name: Starting bbqguys-frontend
+  become: yes
+  become_user: nginx
+  command:
+    chdir: /var/www/bbqguys-frontend
+    cmd: /usr/local/bin/pm2 start /var/www/bbqguys-frontend/pm2.config.js --env testing

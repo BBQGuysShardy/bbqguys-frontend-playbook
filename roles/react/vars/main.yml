@@ -1,0 +1,9 @@
+---
+yum_packages:
+  - git-2.39.3-1.el9_2.x86_64
+  - nginx-1:1.20.1-14.el9_2.1.x86_64
+  - nodejs-1:16.20.2-3.el9_2.x86_64
+npm_packages:
+  - yarn
+  - pm2
+  - typescript

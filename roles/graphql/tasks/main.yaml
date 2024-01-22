@@ -1,0 +1,158 @@
+---
+#- name: Updating /etc/hosts
+#  lineinfile:
+#    dest: /etc/hosts
+#    regexp: '.*{{ item.name }}$'
+#    line: "{{ item.ip }} {{ item.name }}"
+#    state: present
+#  loop: "{{  }}"
+#  with_items: "{{ groups.all }}"
+- name: Installing Yum Packages
+  yum:
+    name: "{{ yum_packages }}"
+    state: present
+- name: Get node version
+  shell: node --version
+  register: node_installed_version
+  ignore_errors: true
+- name: Print node_installed_version
+  debug:
+    msg: "{{ node_installed_version }}"
+- name: Downloading and Unpacking NodeJS Version
+  unarchive: 
+    src: "https://nodejs.org/download/release/{{ node_version }}/{{ node_directory }}.tar.gz"
+    dest: "/tmp/"
+    remote_src: yes
+  when: node_installed_version.stdout != node_version
+- name: Installing NodeJS From Extracted Package
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    local_follow: false
+  loop:
+    - src: "/tmp/{{ node_directory }}/bin"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/include"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/lib"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/share"
+      dest: /usr/
+- name: Installing Global Node Packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+  loop: "{{ npm_packages }}"
+- name: Ensuring /var/www Exists
+  file:
+    path: /var/www
+    state: directory
+    mode: '0775'
+    owner: nginx
+    group: wheel
+- name: Setting Safe Directories in Git Config
+  community.general.git_config:
+    name: safe.directory
+    scope: global
+    value: /var/www/bbqguys-graphql
+- name: Cloning bbqguys-graphql Repository
+  git:
+    repo: git@github.com:BBQGuys-QA/bbqguys-graphql.git
+    dest: /var/www/bbqguys-graphql
+    accept_hostkey: true
+    single_branch: true
+    depth: 1
+    force: true
+    version: testing
+    key_file: /home/shardy/.ssh/id_rsa # This should be changed to a generic system user later.
+- name: Moving .env.dev to .env
+  command: mv /var/www/bbqguys-graphql/.env.dev /var/www/bbqguys-graphql/.env
+- name: Running npm link
+  command: 
+    cmd: npm link
+    chdir: /var/www/bbqguys-graphql/
+- name: Installing Yarn Packages
+  community.general.yarn:
+    path: /var/www/bbqguys-graphql
+    state: present
+- name: Placing pm2.config.cjs
+  copy:
+    src: var/www/bbqguys-graphql/pm2.config.cjs
+    dest: /var/www/bbqguys-graphql/pm2.config.cjs
+    owner: nginx
+    group: wheel
+    mode: '0644'
+- name: removing pm2.config.js
+  file:
+    path: /var/www/bbqguys-graphql/pm2.config.js
+    state: absent
+- name: Updating owner and group of /var/www/bbqguys-graphql
+  file:
+    path: /var/www/bbqguys-graphql
+    owner: nginx
+    group: wheel
+    recurse: true
+- name: Ensuring /etc/nginx/ssl exists
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: '0644'
+    owner: root
+    group: root
+- name: Installing TLS cert
+  copy:
+    src: etc/nginx/ssl/2023.pem
+    dest: /etc/nginx/ssl/2023.pem
+    owner: root
+    group: root
+    mode: '0644'
+- name: Installing TLS key
+  copy:
+    src: etc/nginx/ssl/2023.key
+    dest: /etc/nginx/ssl/2023.key
+    owner: root
+    group: root
+    mode: '0644'
+- name: Updating nginx configuration
+  copy:
+    src: etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+- name: Enabling traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: https
+    zone: public
+    state: enabled
+    immediate: true
+    permanent: true
+- name: Enabling traffic for port 4000
+  ansible.posix.firewalld:
+    port: 4000/tcp
+    zone: public
+    state: enabled
+    immediate: true
+    permanent: true
+- name: Starting memcached
+  service:
+    name: memcached
+    enabled: true
+    state: restarted
+- name: Starting nginx
+  service:
+    name: nginx
+    enabled: true
+    state: restarted
+- name: Stopping existing PM2
+  become: yes
+  become_user: nginx
+  command:
+    cmd: pm2 kill
+- name: Starting bbqguys-graphql
+  become: yes
+  become_user: nginx
+  command:
+    chdir: /var/www/bbqguys-graphql
+    cmd: pm2 start /var/www/bbqguys-graphql/pm2.config.cjs --env testing
