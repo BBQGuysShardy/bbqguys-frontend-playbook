@@ -4,6 +4,10 @@
   gather_facts: yes
   hosts: all
   tasks:
+  - name: Upgrading all packages
+    ansible.builtin.dnf:
+      name: "*"
+      state: latest
   - name: Running react role
     import_role:
       name: react

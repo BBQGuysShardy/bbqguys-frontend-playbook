@@ -1,0 +1,6 @@
+web:
+  hosts:
+    10.0.0.2:
+graphql:
+  hosts:
+    10.0.0.5:
