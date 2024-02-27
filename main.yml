@@ -1,13 +1,12 @@
 ---
-- name: Base playbook
+- name: bbqguys-frontend playbook
   become: true
   gather_facts: yes
   hosts: all
   tasks:
-  - name: Upgrading all packages
-    ansible.builtin.dnf:
-      name: "*"
-      state: latest
+  - name: Running common role
+    import_role:
+      name: common
   - name: Running react role
     import_role:
       name: react

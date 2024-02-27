@@ -1,0 +1,43 @@
+---
+- name: Upgrading all packages
+  package:
+    name: "*"
+    state: latest
+- name: Get node version
+  shell: node --version
+  register: node_installed_version
+  ignore_errors: true
+- name: Print node_installed_version
+  debug:
+    msg: "{{ node_installed_version }}"
+- name: Downloading and Unpacking NodeJS Version
+  unarchive: 
+    src: "https://nodejs.org/download/release/{{ node_version }}/{{ node_directory }}.tar.gz"
+    dest: "/tmp/"
+    remote_src: yes
+  when: (node_installed_version.stdout != node_version) or (node_installed_version is undefined)
+- name: Installing NodeJS From Extracted Package
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    local_follow: false
+    force: true
+  loop:
+    - src: "/tmp/{{ node_directory }}/bin"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/include"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/lib"
+      dest: /usr/
+    - src: "/tmp/{{ node_directory }}/share"
+      dest: /usr/
+- name: Configuring Nginx group
+  group:
+    name: nginx
+- name: Configuring Nginx User
+  user:
+    name: nginx
+    comment: nginx
+    group: nginx
+    system: true

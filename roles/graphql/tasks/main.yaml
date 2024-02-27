@@ -7,38 +7,10 @@
 #    state: present
 #  loop: "{{  }}"
 #  with_items: "{{ groups.all }}"
-- name: Installing Yum Packages
-  yum:
+- name: Installing Packages
+  package:
     name: "{{ yum_packages }}"
     state: present
-- name: Get node version
-  shell: node --version
-  register: node_installed_version
-  ignore_errors: true
-- name: Print node_installed_version
-  debug:
-    msg: "{{ node_installed_version }}"
-- name: Downloading and Unpacking NodeJS Version
-  unarchive: 
-    src: "https://nodejs.org/download/release/{{ node_version }}/{{ node_directory }}.tar.gz"
-    dest: "/tmp/"
-    remote_src: yes
-  when: node_installed_version.stdout != node_version
-- name: Installing NodeJS From Extracted Package
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    remote_src: yes
-    local_follow: false
-  loop:
-    - src: "/tmp/{{ node_directory }}/bin"
-      dest: /usr/
-    - src: "/tmp/{{ node_directory }}/include"
-      dest: /usr/
-    - src: "/tmp/{{ node_directory }}/lib"
-      dest: /usr/
-    - src: "/tmp/{{ node_directory }}/share"
-      dest: /usr/
 - name: Installing Global Node Packages
   community.general.npm:
     name: "{{ item }}"
@@ -50,7 +22,7 @@
     state: directory
     mode: '0775'
     owner: nginx
-    group: wheel
+    group: sudo
 - name: Setting Safe Directories in Git Config
   community.general.git_config:
     name: safe.directory
@@ -70,7 +42,7 @@
   command: mv /var/www/bbqguys-graphql/.env.dev /var/www/bbqguys-graphql/.env
 - name: Running npm link
   command: 
-    cmd: npm link
+    cmd: yarn link
     chdir: /var/www/bbqguys-graphql/
 - name: Installing Yarn Packages
   community.general.yarn:
@@ -81,7 +53,7 @@
     src: var/www/bbqguys-graphql/pm2.config.cjs
     dest: /var/www/bbqguys-graphql/pm2.config.cjs
     owner: nginx
-    group: wheel
+    group: sudo
     mode: '0644'
 - name: removing pm2.config.js
   file:
@@ -91,7 +63,7 @@
   file:
     path: /var/www/bbqguys-graphql
     owner: nginx
-    group: wheel
+    group: sudo
     recurse: true
 - name: Ensuring /etc/nginx/ssl exists
   file:
@@ -121,25 +93,36 @@
     owner: root
     group: root
     mode: '0644'
-- name: Enabling traffic in default zone for https service
-  ansible.posix.firewalld:
-    service: https
-    zone: public
-    state: enabled
-    immediate: true
-    permanent: true
-- name: Enabling traffic for port 4000
-  ansible.posix.firewalld:
-    port: 4000/tcp
-    zone: public
-    state: enabled
-    immediate: true
-    permanent: true
-- name: Starting memcached
-  service:
-    name: memcached
-    enabled: true
-    state: restarted
+#- name: Enabling traffic in default zone for https service
+#  ansible.posix.firewalld:
+#    service: https
+#    zone: public
+#    state: enabled
+#    immediate: true
+#    permanent: true
+#- name: Enabling traffic for port 4000
+#  ansible.posix.firewalld:
+#    port: 4000/tcp
+#    zone: public
+#    state: enabled
+#    immediate: true
+#    permanent: true
+- name: Installing UFW
+  package:
+    name: ufw
+- name: Enabling traffic via UFW
+  ufw:
+    rule: allow
+    port: '{{ item.port }}'
+    proto: tcp
+  loop:
+    - port: '80'
+    - port: '4000'
+- name: Enabling Traffic for Port 4000
+  ufw:
+    rule: allow
+    port: '4000'
+    proto: tcp
 - name: Starting nginx
   service:
     name: nginx

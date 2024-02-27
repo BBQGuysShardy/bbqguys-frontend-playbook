@@ -1,10 +1,10 @@
 module.exports = {
     apps: [{
         name: "BBQGuys React frontend",
-        cwd: './bbqguys-frontend',
-        script: '/usr/local/bin/yarn',
+        cwd: '/var/www/bbqguys-frontend',
+        script: '/usr/bin/yarn',
         args: 'testing:start',
-        interpreter: '/bin/bash',
+        //interpreter: '/bin/bash',
         //instances: 3,
         env_production: {
             "NODE_ENV": "production",

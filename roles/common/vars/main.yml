@@ -1,0 +1,3 @@
+---
+node_version: v21.6.2
+node_directory: "node-{{ node_version }}-linux-x64"
