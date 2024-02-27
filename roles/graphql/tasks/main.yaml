@@ -14,7 +14,7 @@
     state: directory
     mode: '0775'
     owner: nginx
-    group: sudo
+    group: nginx
 - name: Setting Safe Directories in Git Config
   community.general.git_config:
     name: safe.directory
@@ -45,7 +45,7 @@
     src: var/www/bbqguys-graphql/pm2.config.cjs
     dest: /var/www/bbqguys-graphql/pm2.config.cjs
     owner: nginx
-    group: sudo
+    group: nginx
     mode: '0644'
 - name: removing pm2.config.js
   file:
@@ -55,7 +55,7 @@
   file:
     path: /var/www/bbqguys-graphql
     owner: nginx
-    group: sudo
+    group: nginx
     recurse: true
 - name: Ensuring /etc/nginx/ssl exists
   file:

@@ -14,7 +14,7 @@
     state: directory
     mode: '0775'
     owner: nginx
-    group: sudo
+    group: nginx
 - name: Setting Safe Directories in Git Config
   community.general.git_config:
     name: safe.directory
@@ -35,7 +35,7 @@
     src: var/www/bbqguys-frontend/.env
     dest: /var/www/bbqguys-frontend/.env
     owner: nginx
-    group: sudo
+    group: nginx
     mode: '0644'
 #- name: Placing .env File
 #  copy:
@@ -45,14 +45,14 @@
 #    local_follow: false
 #    force: true
 #    owner: nginx
-#    group: sudo
+#    group: nginx
 #    mode: '0644'
 - name: Placing pm2.config.js
   copy:
     src: var/www/bbqguys-frontend/pm2.config.js
     dest: /var/www/bbqguys-frontend/pm2.config.js
     owner: nginx
-    group: sudo
+    group: nginx
     mode: '0644'
 - name: Installing Yarn Packages
   command:
@@ -70,7 +70,7 @@
   file:
     path: /var/www/bbqguys-frontend
     owner: nginx
-    group: sudo
+    group: nginx
     recurse: true
 - name: Ensuring /etc/nginx/ssl exists
   file:
