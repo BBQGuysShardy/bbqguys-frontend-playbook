@@ -1,15 +1,7 @@
 ---
-#- name: Updating /etc/hosts
-#  lineinfile:
-#    dest: /etc/hosts
-#    regexp: '.*{{ item.name }}$'
-#    line: "{{ item.ip }} {{ item.name }}"
-#    state: present
-#  loop: "{{  }}"
-#  with_items: "{{ groups.all }}"
 - name: Installing Packages
   package:
-    name: "{{ yum_packages }}"
+    name: "{{ packages }}"
     state: present
 - name: Installing Global Node Packages
   community.general.npm:
@@ -93,20 +85,6 @@
     owner: root
     group: root
     mode: '0644'
-#- name: Enabling traffic in default zone for https service
-#  ansible.posix.firewalld:
-#    service: https
-#    zone: public
-#    state: enabled
-#    immediate: true
-#    permanent: true
-#- name: Enabling traffic for port 4000
-#  ansible.posix.firewalld:
-#    port: 4000/tcp
-#    zone: public
-#    state: enabled
-#    immediate: true
-#    permanent: true
 - name: Installing UFW
   package:
     name: ufw
