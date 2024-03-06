@@ -1,8 +1,4 @@
 ---
-- name: Installing Packages
-  package:
-    name: "{{ packages }}"
-    state: present
 - name: Installing Global Node Packages
   community.general.npm:
     name: "{{ item }}"
