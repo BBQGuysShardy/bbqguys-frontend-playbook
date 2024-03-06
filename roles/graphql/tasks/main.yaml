@@ -40,6 +40,13 @@
   community.general.yarn:
     path: /var/www/bbqguys-graphql
     state: present
+- name: Placing .env
+  copy:
+    src: var/www/bbqguys-graphql/.env
+    dest: /var/www/bbqguys-graphql/.env
+    owner: nginx
+    group: nginx
+    mode: '0644'
 - name: Placing pm2.config.cjs
   copy:
     src: var/www/bbqguys-graphql/pm2.config.cjs
@@ -66,15 +73,15 @@
     group: root
 - name: Installing TLS cert
   copy:
-    src: etc/nginx/ssl/2023.pem
-    dest: /etc/nginx/ssl/2023.pem
+    src: etc/nginx/ssl/ssl.pem
+    dest: /etc/nginx/ssl/ssl.pem
     owner: root
     group: root
     mode: '0644'
 - name: Installing TLS key
   copy:
-    src: etc/nginx/ssl/2023.key
-    dest: /etc/nginx/ssl/2023.key
+    src: etc/nginx/ssl/ssl.key
+    dest: /etc/nginx/ssl/ssl.key
     owner: root
     group: root
     mode: '0644'

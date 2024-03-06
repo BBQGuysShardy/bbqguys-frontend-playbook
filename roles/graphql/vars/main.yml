@@ -2,6 +2,7 @@
 packages:
   - git
   - nginx
+  - ruby-full
 npm_packages:
   - yarn
   - pm2

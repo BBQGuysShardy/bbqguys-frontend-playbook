@@ -1,6 +1,8 @@
 web:
   hosts:
     10.0.0.2:
+      non_prod: true
 graphql:
   hosts:
     10.0.0.5:
+      non_prod: true

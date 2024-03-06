@@ -81,15 +81,15 @@
     group: root
 - name: Installing TLS cert
   copy:
-    src: etc/nginx/ssl/2023.pem
-    dest: /etc/nginx/ssl/2023.pem
+    src: etc/nginx/ssl/ssl.pem
+    dest: /etc/nginx/ssl/ssl.pem
     owner: root
     group: root
     mode: '0644'
 - name: Installing TLS key
   copy:
-    src: etc/nginx/ssl/2023.key
-    dest: /etc/nginx/ssl/2023.key
+    src: etc/nginx/ssl/ssl.key
+    dest: /etc/nginx/ssl/ssl.key
     owner: root
     group: root
     mode: '0644'

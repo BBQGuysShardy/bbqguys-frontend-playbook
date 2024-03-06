@@ -3,6 +3,36 @@
   package:
     name: "*"
     state: latest
+- name: Non-Prod Setup
+  block:
+    - name: Install non-prod packages
+      package:
+        name: "{{ non_prod_packages }}"
+        state: present
+    - name: Installing MailHog
+      shell: |
+        go get -u github.com/mailhog/MailHog
+        mv ~/go/bin/MailHog /usr/local/bin/
+    - name: Place MailHog Service File
+      copy:
+        src: etc/systemd/system/mailhog.service
+        dest: /etc/systemd/system/mailhog.service
+        owner: root
+        group: root
+        mode: '0755'
+    - name: Ensure MailHog Log Directory Exists
+      file:
+        path: /var/log/mailhog
+        state: directory
+        mode: '0775'
+        owner: root
+        group: root
+    - name: Start MailHog Service
+      service:
+        name: mailhog
+        state: started
+        enabled: yes
+  when: non_prod is true
 - name: Get node version
   shell: node --version
   register: node_installed_version

@@ -1,3 +1,15 @@
 ---
 node_version: v21.6.2
 node_directory: "node-{{ node_version }}-linux-x64"
+ruby_version: "3.3.0"
+rbenv_version: "v1.2.0"
+non_prod_packages:
+  - build-essential
+  - git
+  - golang-go
+  - libffi-dev
+  - zlib1g-dev
+  - libreadline-dev 
+  - libssl-dev 
+  - libcurl4-openssl-dev
+  - libyaml-dev

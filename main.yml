@@ -10,8 +10,8 @@
   - name: Running react role
     import_role:
       name: react
-    when: "ansible_default_ipv4.address == '10.0.0.2'"
+    when: inventory_hostname in groups["web"]
   - name: Running graphql role
     import_role:
       name: graphql
-    when: "ansible_default_ipv4.address == '10.0.0.5'"
+    when: inventory_hostname in groups["graphql"]

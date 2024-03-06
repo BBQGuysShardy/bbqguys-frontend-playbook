@@ -1,0 +1,11 @@
+[Unit]
+Description=MailHog
+Documentation=https://github.com/mailhog/MailHog
+
+[Service]
+Type=simple
+ExecStart= /usr/local/bin/MailHog -api-bind-addr 0.0.0.0:1080 -ui-bind-addr 0.0.0.0:1080 -smtp-bind-addr 0.0.0.0:25 > /var/log/mailhog/mailhog.log 2>&1 &
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
