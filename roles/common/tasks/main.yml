@@ -71,3 +71,10 @@
     comment: nginx
     group: nginx
     system: true
+- name: Ensure /etc/nginx is World Accessible
+  file:
+    path: /etc/nginx
+    state: directory
+    mode: '0775'
+    owner: nginx
+    group: nginx

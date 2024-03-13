@@ -22,31 +22,24 @@
     value: /var/www/bbqguys-frontend
 - name: Cloning bbqguys-frontend React Repository
   git:
-    repo: git@github.com:BBQGuys-QA/bbqguys-frontend.git
+    repo: "{{ git_repo }}"
     dest: /var/www/bbqguys-frontend
     accept_hostkey: true
     single_branch: true
     depth: 1
     force: true
-    version: testing
+    version: "{{ git_branch }}"
     key_file: /home/shardy/.ssh/id_rsa # This should be changed to a generic system user later.
-- name: Placing .env
+- name: Placing .env File
   copy:
-    src: var/www/bbqguys-frontend/.env
+    src: "/var/www/bbqguys-frontend/.env.{{ env_file_extension }}"
     dest: /var/www/bbqguys-frontend/.env
+    remote_src: yes
+    local_follow: false
+    force: true
     owner: nginx
     group: nginx
     mode: '0644'
-#- name: Placing .env File
-#  copy:
-#    src: /var/www/bbqguys-frontend/.env.testing
-#    dest: /var/www/bbqguys-frontend/.env
-#    remote_src: yes
-#    local_follow: false
-#    force: true
-#    owner: nginx
-#    group: nginx
-#    mode: '0644'
 - name: Placing pm2.config.js
   copy:
     src: var/www/bbqguys-frontend/pm2.config.js
@@ -94,8 +87,8 @@
     group: root
     mode: '0644'
 - name: Updating nginx configuration
-  copy:
-    src: etc/nginx/nginx.conf
+  template:
+    src: templates/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root

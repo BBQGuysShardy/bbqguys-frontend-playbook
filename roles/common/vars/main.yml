@@ -5,6 +5,7 @@ non_prod_packages:
   - build-essential
   - git
   - golang-go
+  - nginx
   - libffi-dev
   - zlib1g-dev
   - libreadline-dev 

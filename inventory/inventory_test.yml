@@ -1,0 +1,18 @@
+web:
+  hosts:
+    test-web01.bbqguys.com:
+  vars:
+    non_prod: true
+    env_file_extension: test-frontend
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-frontend.git
+    git_branch: testing
+graphql:
+  hosts:
+    test-graphql01.bbqguys.com:
+  vars:
+    non_prod: true
+    env_file_extension: test-graphql
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-graphql.git
+    git_branch: testing
+
+  

@@ -18,16 +18,24 @@
     value: /var/www/bbqguys-graphql
 - name: Cloning bbqguys-graphql Repository
   git:
-    repo: git@github.com:BBQGuys-QA/bbqguys-graphql.git
+    repo: "{{ git_repo }}"
     dest: /var/www/bbqguys-graphql
     accept_hostkey: true
     single_branch: true
     depth: 1
     force: true
-    version: testing
+    version: "{{ git_branch }}"
     key_file: /home/shardy/.ssh/id_rsa # This should be changed to a generic system user later.
-- name: Moving .env.dev to .env
-  command: mv /var/www/bbqguys-graphql/.env.dev /var/www/bbqguys-graphql/.env
+- name: Placing .env File
+  copy:
+    src: "/var/www/bbqguys-graphql/.env.{{ env_file_extension }}"
+    dest: /var/www/bbqguys-graphql/.env
+    remote_src: yes
+    local_follow: false
+    force: true
+    owner: nginx
+    group: nginx
+    mode: '0644'
 - name: Running npm link
   command: 
     cmd: yarn link
@@ -36,13 +44,6 @@
   community.general.yarn:
     path: /var/www/bbqguys-graphql
     state: present
-- name: Placing .env
-  copy:
-    src: var/www/bbqguys-graphql/.env
-    dest: /var/www/bbqguys-graphql/.env
-    owner: nginx
-    group: nginx
-    mode: '0644'
 - name: Placing pm2.config.cjs
   copy:
     src: var/www/bbqguys-graphql/pm2.config.cjs
@@ -81,9 +82,9 @@
     owner: root
     group: root
     mode: '0644'
-- name: Updating nginx configuration
-  copy:
-    src: etc/nginx/nginx.conf
+- name: Placing nginx Configuration
+  template:
+    src: templates/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root

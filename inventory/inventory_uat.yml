@@ -1,0 +1,17 @@
+web:
+  hosts:
+    uat-web01.bbqguys.com:
+    uat-web02.bbqguys.com:
+  vars:
+    non_prod: true
+    env_file_extension: uat-frontend
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-frontend.git
+    git_branch: testing
+graphql:
+  hosts:
+    uat-graphql01.bbqguys.com:
+  vars:
+    non_prod: true
+    env_file_extension: uat-graphql
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-graphql.git
+    git_branch: testing
