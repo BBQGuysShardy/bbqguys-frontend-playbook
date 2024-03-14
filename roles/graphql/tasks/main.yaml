@@ -89,22 +89,20 @@
     owner: root
     group: root
     mode: '0644'
-- name: Installing UFW
-  package:
-    name: ufw
-- name: Enabling traffic via UFW
-  ufw:
-    rule: allow
-    port: '{{ item.port }}'
-    proto: tcp
-  loop:
-    - port: '80'
-    - port: '4000'
-- name: Enabling Traffic for Port 4000
-  ufw:
-    rule: allow
-    port: '4000'
-    proto: tcp
+- name: Non-Prod Setup
+  block:
+  - name: Installing UFW
+    package:
+      name: ufw
+  - name: Enabling traffic via UFW
+    ufw:
+      rule: allow
+      port: '{{ item.port }}'
+      proto: tcp
+    loop:
+      - port: '80'
+      - port: '4000'
+  when: non_prod is true
 - name: Starting nginx
   service:
     name: nginx
