@@ -1,0 +1,20 @@
+web:
+  hosts:
+    stage-web01.bbqguys.com:
+      ansible_host: 10.0.2.3
+    stage-web02.bbqguys.com:
+      ansible_host: 10.0.2.4
+  vars:
+    non_prod: true
+    env_file_extension: stage-frontend
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-frontend.git
+    git_branch: testing
+graphql:
+  hosts:
+    stage-graphql01.bbqguys.com:
+      ansible_host: 10.0.2.7
+  vars:
+    non_prod: true
+    env_file_extension: stage-graphql
+    git_repo: git@github.com:BBQGuys-QA/bbqguys-graphql.git
+    git_branch: testing
